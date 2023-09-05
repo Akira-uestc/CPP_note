@@ -24,6 +24,8 @@ int main()
     list_node *p;
     p = InitChain(1.0);
     AddToChain(p,1.4);
+    godbless();
+    printf("下面是输出结果\n");
     list_node* value = SearchChain(p,2);
     printf("%lf\n",value -> Data);
     TraversalChain(p);
