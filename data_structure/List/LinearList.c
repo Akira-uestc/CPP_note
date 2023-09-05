@@ -65,6 +65,7 @@ void ChangeValue(int location,double value,double*List_array)
 后来查资料得知C语言中浮点数储存为一个极小的值，打断点调试得为-4.8e-23
 因此通过fabs()函数取绝对值，判断其是否小于 1e-15
 */
+
 void InsertToList(int* length,int location,double InsertNumber, double*List_array)
 {
     
