@@ -12,7 +12,7 @@ typedef struct LinearList
 typedef struct Index
 {
     LinearList* num;
-    int count;   //已生成的线性表数
+    int count;   //已生成的线性表数量
 } Index;
 
 void InitList(Index* index);   //初始化一个线性表
@@ -24,7 +24,6 @@ void InsertElement(Index* index);   //插值
 void DeleteElement(Index* index);   //删除值
 LinearList* UnionList(Index* index);   //求并集
 LinearList* InterSectionList(Index* index);    //求交集
-
 
 int main()
 {
@@ -46,7 +45,7 @@ int main()
         case 6:InsertElement(AllList);break;
         case 7:DeleteElement(AllList);break;
         case 8:InterSectionList(AllList);break;
-        case 9:UnionSectionList(AllList);
+        case 9:UnionList(AllList);break;
     }
    }
 }
@@ -55,11 +54,15 @@ void InitList(Index* index)
 {   
     printf("开始创建线性表\n");
     int max_space_temp = 0;
+    //创建一个新的线性表
     LinearList* new = malloc(sizeof(LinearList));
     index->count += 1; 
     index[index->count].num = new;
+
     printf("分配给该线性表的最大空间？\n");
     scanf("%d",&max_space_temp);
+
+    //完成初始化
     index[index->count].num->data = (double*)malloc(max_space_temp * sizeof(double));
     index[index->count].num->size = 0;
     index[index->count].num->max_space = max_space_temp;
@@ -73,6 +76,12 @@ int AssignValues(Index* index)
     scanf("%d",&num_temp);
     int temp = 0;
     char control = 'y';
+
+    //检测该线性表是否已赋值
+    if(index[num_temp].num->size != 0)
+    printf("原有值将会被覆盖!");
+
+    //输入除‘y’之外的其他任何值都会推退出
     while(control == 'y') 
     {
         printf("输入一个数字： \n");
@@ -115,7 +124,7 @@ double SearchList(Index* index)
     if(location>index[num_temp].num->size||location < 0)
     {
         printf("No value there\n");
-        return;
+        return 0;
     }
     else printf("%lf",index[num_temp].num->data[location]);
 }
@@ -147,15 +156,20 @@ void InsertElement(Index* index)
     int location = -1,value = -1;
     printf("location?\n");
     scanf("%d",&location);
-    printf("值为?\n");
-    scanf("%d",&value);
+
+    //检测位置是否合法
     if(location > (index[num_temp].num->size + 1)||location < 0) 
     printf("Invaid location\n");
+
+    printf("值为?\n");
+    scanf("%d",&value);    
     if(location == index[num_temp].num->size + 1) 
     {
         index[num_temp].num -> data[location-1] = value;
         index[num_temp].num -> size += 1;
     }
+
+    //将location后的值依次前移
     if(location <= index[num_temp].num->size&&location > 0)
     {
         for(int i = index[num_temp].num->size; i > location - 1; i--)
@@ -175,12 +189,17 @@ void DeleteElement(Index* index)
     int location = -1,value = -1;
     printf("location?\n");
     scanf("%d",&location);
+
+    //检测位置是否合法
     if(location > (index[num_temp].num->size + 1)||location < 0) 
     printf("Invaid location\n");
+
     if(location == (index[num_temp].num->size + 1))
     {
         index[num_temp].num->size -=1;
     }
+
+    //位置标号大于location的值依次前移
     if(location <= index[num_temp].num->size&&location > 0)
     {
         for(int i = location - 1; i < index[num_temp].num -> size; i++ )
@@ -193,9 +212,11 @@ void DeleteElement(Index* index)
 
 LinearList* InterSectionList(Index* index)
 {
-    printf("输入要求交集的两个线性表标号");
+    printf("输入要求交集的两个线性表标号(使用空格分割标号):");
     int la,lb;
     scanf("%d %d",&la,&lb);
+
+    //初始化一个result线性表，存入index，以便调用
     LinearList* list1 = index[la].num;
     LinearList* list2 = index[lb].num;
     LinearList* result = (LinearList*)malloc(sizeof(LinearList));
@@ -205,11 +226,13 @@ LinearList* InterSectionList(Index* index)
     result->max_space = maxCapacity;
     result->data = (double*)malloc(maxCapacity*sizeof(double));
     result->size = 0;
+
     for (int i = 0; i < list1->size; i++) 
     {
         double element = list1->data[i];
         for (int j = 0; j < list2->size; j++) 
         {
+            //将相同的值赋给result表
             if (list2->data[j] == element) 
             {
                 result->data[result->size] = element;
@@ -223,11 +246,13 @@ LinearList* InterSectionList(Index* index)
     return result;
 }
 
-void UnionSectionList(Index* index) 
+LinearList* UnionList(Index* index) 
 {
     printf("输入要求并集的两个线性表标号(使用空格分割标号):");
     int la,lb;
     scanf("%d %d",&la,&lb);
+
+    //初始化一个result线性表，存入index
     LinearList* list1 = index[la].num;
     LinearList* list2 = index[lb].num;
     LinearList* result = (LinearList*)malloc(sizeof(LinearList));
@@ -237,6 +262,7 @@ void UnionSectionList(Index* index)
     result->max_space = maxCapacity;
     result->data = (double*)malloc(maxCapacity*sizeof(double));
     result->size = 0;
+
     for (int i = 0; i < list2->size; i++)
     {
         result->data[result->size++] = list2->data[i];
@@ -244,15 +270,18 @@ void UnionSectionList(Index* index)
     for (int i = 0; i < list1->size; i++) 
     {
         double element = list1->data[i];
+
+        //通过一个变量检测是否存在重复值
         int ifSame = 0;
-        
         for (int j = 0; j < list2->size; j++) 
         {
-            if (list2->data[j] == element) {
+            if (list2->data[j] == element) 
+            {
                 ifSame = 1;
                 break;
             }
         }
+        //ifSame为零则不重复，将该值后移到size点后插入result
         if (!ifSame) 
         {
             result->data[result->size++] = element;
