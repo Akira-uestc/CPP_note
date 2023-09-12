@@ -9,24 +9,39 @@ location 插入删除或赋值位置
 */
 
 double* InitList(int Length);  //初始化线性表
+//void AssignList(int* length,double*List_array);   //批量赋值
 void PrintList(int* length,double*List_array);  //打印线性表
 double SearchList(int number,double*List_array);  //查找线性表中的元素
 void ChangeValue(int location,double value,double*List_array);  //改变表中指定元素的值
 void InsertToList(int* length,int location,double InsertNumber, double*List_array);  //插入元素
 void DeleteFromList(int* length,int location,double*List_array);  //删除元素
+void InterSection(int* lengthA,int* lengthB,double* array_a,double* array_b);   //求A与B的并集
 
 int main()
 {
     //测试
     double* p;
-    int initl = 10;
-    int* length = &initl;
-    p = InitList(10);
-    ChangeValue(5,5.0,p);
-    InsertToList(length,3,1.4,p);
-    PrintList(length,p);
-    double value = SearchList(5,p);
-    printf("%lf\n",value);
+
+    //初始化数组A
+    int initlA = 10;
+    int* lengthA = &initlA;
+    p = InitList(*lengthA);
+    //printf("给A赋值:\n");
+    //AssignList(lengthA,p);
+
+    //初始化数组B
+    int initlB = 5;
+    int* lengthB = &initlB;
+    double* Q = InitList(*lengthB);
+    //printf("给B赋值:\n");
+    //AssignList(lengthB,Q);
+
+    //ChangeValue(5,5.0,p);
+    //InsertToList(lengthA,3,1.4,p);
+    //PrintList(lengthA,p);
+    //double value = SearchList(5,p);
+    //printf("%lf\n",value);
+
     getchar();
     return 0;
 }
@@ -36,6 +51,14 @@ double* InitList(int Length)
     double* LinearList = (double*)malloc(Length * sizeof(double));
     return LinearList;
 }
+
+/*void AssignList(int* length,double*List_array)
+{
+    for(int i = 0;i < *length;i++)
+    {
+        *(List_array + i - 1) = scanf("%lf");
+    }
+}*/
 
 void PrintList(int* length,double*List_array)
 {
