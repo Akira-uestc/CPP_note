@@ -4,7 +4,7 @@
 
 typedef struct Node
 {
-    double Data;
+    double Data;   //数学成绩
     struct Node *Next;
 } Node;
 
@@ -16,23 +16,11 @@ list_node* TraversalChain(list_node* chian);   //遍历
 list_node* SearchChain(list_node* Chain,int locaiton);   //查找元素
 void InsertToChain(list_node* Chain,int location,double value);   //链中插入元素
 void DeleteFromChain(list_node* Chain,int location);   //链中删除元素
-void godbless();
 
 int main()
 {
-    //测试
     list_node *p;
     p = InitChain(1.0);
-    AddToChain(p,1.4);
-    godbless();
-    printf("下面是输出结果\n");
-    list_node* value = SearchChain(p,2);
-    printf("%lf\n",value -> Data);
-    TraversalChain(p);
-    InsertToChain(p,2,2.3);
-    InsertToChain(p,2,1.9);
-    DeleteFromChain(p,2);
-    TraversalChain(p);
     getchar();
     return 0;
 }
@@ -119,32 +107,4 @@ void DeleteFromChain(list_node* Chain,int location)
     list_node* deleted = former -> Next;
     former -> Next = deleted -> Next;
     free(deleted);
-}
-
-//佛祖保佑
-void godbless()
-{
-    char *log = "\
-                         _oo0oo_\r\n\
-                        o8888888o\r\n\
-                        88\" . \"88\r\n\
-                        (| -_- |)\r\n\
-                        0\\  =  /0\r\n\
-                      ___/`---'\\___\r\n\
-                    .' \\\\|     |// '.\r\n\
-                   / \\\\|||  :  |||// \r\n\
-                  / _||||| -:- |||||- \r\n\
-                 |   | \\\\\\  - /// |   |\r\n\
-                 | \\_|  ''\\---/''  |_/ |\r\n\
-                 \\  .-\\__  '-'  ___/-. /\r\n\
-               ___'. .'  /--.--\\  `. .'___\r\n\
-            .\"\" '<  `.___\\_<|>_/___.' >' \"\".\r\n\
-           | | :  `- \\`.;`\\ _ /`;.`/ - ` : | |\r\n\
-           \\  \\ `_.   \\_ __\\ /__ _/   .-` /  /\r\n\
-       =====`-.____`.___ \\_____/___.-`___.-'=====\r\n\
-                         `=---='\r\n\
-\r\n\
-       ~~~~~~~~~~~~~~~~~~~~XCMD~~~~~~~~~~~~~~~~~~~\r\n\
-           \xE4\xBD\x9B\xE7\xA5\x96\xE4\xBF\x9D\xE4\xBD\x91      \xE6\xB0\xB8\xE4\xB8\x8D\xE5\xAE\x95\xE6\x9C\xBA      \xE6\xB0\xB8\xE6\x97\xA0\x42\x55\x47\r\n ";
-printf("%s",log);
 }
