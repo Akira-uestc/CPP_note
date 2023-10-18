@@ -45,6 +45,7 @@ void InsertInBookIDOrder(allBooks *header)
         printf("内存分配失败\n");
         return;
     }
+
     printf("请输入图书编号：");
     scanf("%u", &newBook->book_id);
     getchar();
@@ -56,8 +57,10 @@ void InsertInBookIDOrder(allBooks *header)
     gets(newBook->press);
     printf("请输入出版年份：");
     scanf("%d", &newBook->publish_time);
+
     newBook->accessibility = 1;
     newBook->log = NULL;
+    newBook->next = NULL;
     allBooks *p = header;
     allBooks *q = p->next;
     while (q != NULL && q->book_id < newBook->book_id)
@@ -111,17 +114,17 @@ void DeleteFromBooks(allBooks *header)
 
 void ShowAllBooks(allBooks *header)
 {
-    allBooks *p = header->next;
-    if (p == NULL)
+    allBooks *temp = header->next;
+    if (temp == NULL)
     {
         printf("没有图书信息\n");
         return;
     }
     printf("编号\t名称\t作者\t出版社\t出版年份\t可借状态\n");
-    while (p != NULL)
+    while (temp != NULL)
     {
-        printf("%u\t%s\t%s\t%s\t%d\t", p->book_id, p->book_name, p->author, p->press, p->publish_time);
-        if (p->accessibility == 1)
+        printf("%u\t%s\t%s\t%s\t%d\t", temp->book_id, temp->book_name, temp->author, temp->press, temp->publish_time);
+        if (temp->accessibility == 1)
         {
             printf("可借\n");
         }
@@ -129,7 +132,7 @@ void ShowAllBooks(allBooks *header)
         {
             printf("不可借\n");
         }
-        p = p->next;
+        temp = temp->next;
     }
 }
 
@@ -197,20 +200,33 @@ void BorrowBooks(allBooks *header)
     }
     borrow_info *temp = p->log;
     int current_frequency = 1;
-    while(temp != NULL)
-    {
-        temp = temp->next;
-        current_frequency += 1;
-    }
-    newLog->frequency = current_frequency;
+
     printf("请输入借阅日期（年-月-日）：");
-    scanf("%d-%d-%d", &newLog->year, &newLog->month, &newLog->day);
+    scanf("%d - %d - %d", &newLog->year, &newLog->month, &newLog->day);
     printf("请输入借阅者姓名：");
     getchar();
     gets(newLog->borrower);
-    newLog->next = NULL;
-    temp -> next = newLog;
-    printf("借阅成功\n");
+
+    //适用于第一次借阅记录
+    if(temp == NULL)
+    {
+        newLog->frequency = 1;
+        newLog -> next = NULL;
+        p->log = newLog;
+    }
+    //其后的借阅记录
+    if(temp != NULL)
+    {
+        while (temp -> next != NULL)
+        {
+            temp = temp->next;
+            current_frequency += 1;
+        }
+        newLog->frequency = current_frequency;
+        newLog->next = NULL;
+        temp->next = newLog;
+    }
+    printf("借阅成功\n\n");
 }
 
 void ReturnBooks(allBooks *header)
@@ -259,9 +275,9 @@ void ShowLogs(allBooks *header)
     printf("\t借阅人\t借阅日期\n");
     while (q->next != NULL)
     {
+        q = q->next;
         printf("\t%d-%d-%d\t",q->year,q->month,q->day);
         puts(q->borrower);
         printf("\n");
-        q = q->next;
     }
 }
