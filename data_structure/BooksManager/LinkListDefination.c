@@ -80,6 +80,7 @@ void EnterBooksInfo(allBooks *header)
         InsertInBookIDOrder(header);
         printf("是否继续输入?是:1,否:0 ");
         scanf("%d",&flag);
+        if(flag!=1) flag =0;
     }
 }
 
@@ -273,11 +274,20 @@ void ShowLogs(allBooks *header)
     }
     borrow_info *q = p->log;
     printf("\t借阅人\t借阅日期\n");
-    while (q->next != NULL)
+    if(q != NULL && q->next == NULL)
     {
-        q = q->next;
         printf("\t%d-%d-%d\t",q->year,q->month,q->day);
         puts(q->borrower);
         printf("\n");
+    }
+    if(q != NULL && q->next != NULL)
+    {
+        while (q->next != NULL)
+        {
+            q = q->next;
+            printf("\t%d-%d-%d\t",q->year,q->month,q->day);
+            puts(q->borrower);
+            printf("\n");
+        }
     }
 }
