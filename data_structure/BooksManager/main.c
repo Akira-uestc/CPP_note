@@ -1,9 +1,10 @@
-#include "LinkListDefination.cpp"
+#include "LinkListDefination.c"
 
 int main()
 {
     allBooks* books = (allBooks*)malloc(sizeof(allBooks));
     books->next = NULL;
+    books->log = NULL;
     int x = -1;
     while(1)
     {   

@@ -1,3 +1,7 @@
+//
+// Created by Akira-Amatsume on 2023/10/17.
+//
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,12 +47,13 @@ void InsertInBookIDOrder(allBooks *header)
     }
     printf("请输入图书编号：");
     scanf("%u", &newBook->book_id);
+    getchar();
     printf("请输入图书名称：");
-    scanf("%s", newBook->book_name);
+    gets(newBook->book_name);
     printf("请输入作者姓名：");
-    scanf("%s", newBook->author);
+    gets(newBook->author);
     printf("请输入出版社名称：");
-    scanf("%s", newBook->press);
+    gets(newBook->press);
     printf("请输入出版年份：");
     scanf("%d", &newBook->publish_time);
     newBook->accessibility = 1;
@@ -115,7 +120,7 @@ void ShowAllBooks(allBooks *header)
     printf("编号\t名称\t作者\t出版社\t出版年份\t可借状态\n");
     while (p != NULL)
     {
-        printf("% u\t % s\t % s\t % s\t % d\t", p->book_id, p->book_name, p->author, p->press, p->publish_time);
+        printf("%u\t%s\t%s\t%s\t%d\t", p->book_id, p->book_name, p->author, p->press, p->publish_time);
         if (p->accessibility == 1)
         {
             printf("可借\n");
@@ -132,7 +137,8 @@ void SearchBooks(allBooks* header)
 {
     char keyword[20];
     printf("请输入要查找的图书名称或作者姓名：");
-    scanf("%s", keyword);
+    getchar();
+    gets(keyword);
     allBooks *p = header->next;
     int flag = 0;
     while (p != NULL)
@@ -189,13 +195,21 @@ void BorrowBooks(allBooks *header)
         printf("内存分配失败\n");
         return;
     }
-    newLog->frequency = 1;
+    borrow_info *temp = p->log;
+    int current_frequency = 1;
+    while(temp != NULL)
+    {
+        temp = temp->next;
+        current_frequency += 1;
+    }
+    newLog->frequency = current_frequency;
     printf("请输入借阅日期（年-月-日）：");
     scanf("%d-%d-%d", &newLog->year, &newLog->month, &newLog->day);
     printf("请输入借阅者姓名：");
-    scanf("% s", newLog->borrower);
-    newLog->next = p->log;
-    p->log = newLog;
+    getchar();
+    gets(newLog->borrower);
+    newLog->next = NULL;
+    temp -> next = newLog;
     printf("借阅成功\n");
 }
 
@@ -209,7 +223,6 @@ void ReturnBooks(allBooks *header)
     {
         p = p->next;
     }
-
     if (p == NULL)
     {
         printf("没有找到编号为%u的图书\n", id);
@@ -234,37 +247,21 @@ void ReturnBooks(allBooks *header)
 
 void ShowLogs(allBooks *header)
 {
+    unsigned int id;
+    printf("要查询借阅日志的图书编号:");
+    scanf("%u",&id);
     allBooks *p = header->next;
-    if (p == NULL)
+    while (p != NULL && p->book_id != id)
     {
-        printf("没有图书信息\n");
-        return;
-    }
-    printf("编号\t名称\t作者\t出版社\t出版年份\t可借状态\t借阅次数\t日期\t\t借阅者\n");
-    while (p != NULL)
-    {
-        printf("% u\t % s\t % s\t % s\t % d\t", p->book_id, p->book_name, p->author, p->press, p->publish_time);
-        if (p->accessibility == 1)
-        {
-            printf("可借\t");
-        }
-        else
-        {
-            printf("不可借\t");
-        }
-        borrow_info *q = p->log;
-        if (q == NULL)
-        {
-            printf("\n");
-        }
-        else
-        {
-            while (q != NULL)
-            {
-                printf("%d\t%d-%d-%d\t%s\n", q->frequency, q->year, q->month, q->day, q->borrower);
-                q = q->next;
-            }
-        }
         p = p->next;
+    }
+    borrow_info *q = p->log;
+    printf("\t借阅人\t借阅日期\n");
+    while (q->next != NULL)
+    {
+        printf("\t%d-%d-%d\t",q->year,q->month,q->day);
+        puts(q->borrower);
+        printf("\n");
+        q = q->next;
     }
 }
