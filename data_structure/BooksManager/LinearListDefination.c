@@ -5,22 +5,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
 
 typedef struct borrow_info_Linear
 {
     int year;
     int month;
     int day;
-    char borrower[40];
+    wchar_t borrower[40];
     int length;
 } borrow_info_Linear;
 
 typedef struct allBooks_Linear
 {
     unsigned int book_id;
-    char book_name[40];
-    char author[40];
-    char press[40];
+    wchar_t book_name[100];
+    wchar_t author[40];
+    wchar_t press[100];
     int publish_time;
     int accessibility;
     borrow_info_Linear log;
@@ -38,42 +39,35 @@ void ShowLogs_Linear(allBooks_Linear *header);
 
 void InsertInBookIDOrder_Linear(allBooks_Linear *header)
 {
-    allBooks_Linear *newBook = (allBooks_Linear*) malloc(sizeof (allBooks_Linear));
-    printf("请输入图书编号：");
-    scanf("%u", &newBook->book_id);
-    printf("请输入图书名称：");
-    gets(newBook->book_name);
-    printf("请输入作者姓名：");
-    gets(newBook->author);
-    printf("请输入出版社名称：");
-    gets(newBook->press);
-    printf("请输入出版年份：");
-    scanf("%d", &newBook->publish_time);
-
+    unsigned temp_id;
+    printf("请输入图书编号");
+    scanf("%u",&temp_id);
     int i = 0;
-
-    while(i < header->length && newBook->book_id > header[i].book_id) i++;
-
-    //将i位置后的节点依次后移
+    for(; i < header->length; i++)
+    {
+        if(header[i].book_id == temp_id) printf("该书已存在");
+        if(temp_id > header[i].book_id) continue;
+    }
     for(int j = header-> length + 1; j > i; j--)
     {
         header[j].book_id = header[j-1].book_id;
-        strcpy(header[j].book_name,header[j-1].book_name);
-        strcpy(header[j].author,header[j-1].author);
-        strcpy(header[j].press, header[j-1].press);
+        wcscpy(header[j].book_name,header[j-1].book_name);
+        wcscpy(header[j].author,header[j-1].author);
+        wcscpy(header[j].press, header[j-1].press);
         header[j].publish_time = header[j-1].publish_time;
     }
-    header -> length += 1;
-    //插入新节点
-    header[i].book_id = newBook->book_id;
-    strcpy(header[i].book_name,newBook->book_name);
-    strcpy(header[i].author,newBook->author);
-    strcpy(header[i].press, newBook->press);
-    header[i].publish_time = newBook->publish_time;
-
+    header[i].book_id = temp_id;
+    printf("请输入图书名称：");
+    scanf("%ls",&header[i].book_name);
+    printf("请输入作者姓名：");
+    scanf("%ls",&header[i].author);
+    printf("请输入出版社名称：");
+    scanf("%ls",&header[i].press);
+    printf("请输入出版年份：");
+    scanf("%d",&header[i].publish_time);
     header[i].accessibility = 1;
     header[i].log.length = 0;
-    free(newBook);
+    header -> length += 1;
 }
 
 void EnterBooksInfo_Linear(allBooks_Linear *header)
@@ -106,9 +100,9 @@ void DeleteFromBooks_Linear(allBooks_Linear *header)
     for(int j = location; j < header->length; j++)
     {
         header[j].book_id = header[j+1].book_id;
-        strcpy(header[j].book_name,header[j+1].book_name);
-        strcpy(header[j].author,header[j+1].author);
-        strcpy(header[j].press, header[j+1].press);
+        wcscpy(header[j].book_name,header[j+1].book_name);
+        wcscpy(header[j].author,header[j+1].author);
+       wcscpy(header[j].press, header[j+1].press);
         header[j].publish_time = header[j+1].publish_time;
     }
     header->length -= 1;
@@ -117,13 +111,15 @@ void DeleteFromBooks_Linear(allBooks_Linear *header)
 void ShowAllBooks_Linear(allBooks_Linear *header)
 {
     printf("编号\t名称\t作者\t出版社\t出版年份\t可借状态\n");
+    
     for (int i = 0; i < header->length; i++)
     {
         printf("%u\t", header[i].book_id);
-        printf("%s\t", header[i].book_name);
-        printf("%s\t", header[i].author);
-        printf("%s\t", header[i].press);
+        printf("%ls\t", header[i].book_name);
+        printf("%ls\t", header[i].author);
+        printf("%ls\t", header[i].press);
         printf("%d\t", header[i].publish_time);
+        
         if (header[i].accessibility == 1)
         {
             printf("可借\n");
@@ -137,21 +133,20 @@ void ShowAllBooks_Linear(allBooks_Linear *header)
 
 void SearchBooks_Linear(allBooks_Linear *header)
 {
-    char keyword[20];
+    wchar_t keyword[20];
     printf("请输入要查找的图书名称或作者姓名：");
-    getchar();
-    gets(keyword);
+    scanf("%ls",&keyword);
     int flag = 0;
     for(int i = 0 ; i < header->length ; i++)
     {
-        if(strcmp(header[i].book_name, keyword) == 0 || strcmp(header[i].author, keyword) == 0)
+        if(wcscmp(header[i].book_name, keyword) == 0 || wcscmp(header[i].author, keyword) == 0)
         {
             if (flag == 0)
             {
                 printf("编号\t名称\t作者\t出版社\t出版年份\t可借状态\n");
                 flag = 1;
             }
-            printf("%u\t%s\t%s\t%s\t%d\t", header[i].book_id, header[i].book_name,header[i].author, header[i].press, header[i].publish_time);
+            printf("%u\t%ls\t%ls\t%ls\t%d\t", header[i].book_id, header[i].book_name,header[i].author, header[i].press, header[i].publish_time);
             if (header[i].accessibility == 1)
             {
                 printf("可借\n");
@@ -198,8 +193,7 @@ void BorrowBooks_Linear(allBooks_Linear *header)
             printf("请输入借阅日期（年-月-日）：");
             scanf("%d - %d - %d", &header[location].log.year + k, &header[location].log.month + k,&header[location].log.day + k);
             printf("请输入借阅者姓名：");
-            getchar();
-            gets(header[location].log.borrower + k);
+            scanf("%ls",&header[location].log.borrower + k);
             header[location].log.length += 1;
             printf("借阅成功\n");
         }
@@ -265,7 +259,7 @@ void ShowLogs_Linear(allBooks_Linear *header)
             for(int j = 0; j < header[location].log.length; j++)
             {
                 printf("\t%d - %d - %d\t",header[location].log.year + j,header[location].log.month + j,header[location].log.day + j);
-                puts(header[location].log.borrower + j);
+                printf("%ls",header[location].log.borrower + j);
             }
         }
     }

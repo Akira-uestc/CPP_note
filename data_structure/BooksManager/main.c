@@ -4,6 +4,7 @@
 
 int main()
 {
+    setlocale (LC_ALL,"");
     int division;
     printf("选择使用线性表还是链表:1.线性表 2.链表\n");
     scanf("%d",&division);
