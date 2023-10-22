@@ -11,16 +11,16 @@ typedef struct borrow_info_Linear
     int year;
     int month;
     int day;
-    char borrower[20];
+    char borrower[40];
     int length;
 } borrow_info_Linear;
 
 typedef struct allBooks_Linear
 {
     unsigned int book_id;
-    char book_name[20];
-    char author[20];
-    char press[20];
+    char book_name[40];
+    char author[40];
+    char press[40];
     int publish_time;
     int accessibility;
     borrow_info_Linear log;
@@ -41,7 +41,6 @@ void InsertInBookIDOrder_Linear(allBooks_Linear *header)
     allBooks_Linear *newBook = (allBooks_Linear*) malloc(sizeof (allBooks_Linear));
     printf("请输入图书编号：");
     scanf("%u", &newBook->book_id);
-    getchar();
     printf("请输入图书名称：");
     gets(newBook->book_name);
     printf("请输入作者姓名：");
@@ -74,6 +73,7 @@ void InsertInBookIDOrder_Linear(allBooks_Linear *header)
 
     header[i].accessibility = 1;
     header[i].log.length = 0;
+    free(newBook);
 }
 
 void EnterBooksInfo_Linear(allBooks_Linear *header)
