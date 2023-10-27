@@ -28,15 +28,6 @@ typedef struct allBooks_Linear
     int length;
 } allBooks_Linear;
 
-void InsertInBookIDOrder_Linear(allBooks_Linear *header);
-void EnterBooksInfo_Linear(allBooks_Linear *header);
-void DeleteFromBooks_Linear(allBooks_Linear *header);
-void ShowAllBooks_Linear(allBooks_Linear *header);
-void SearchBooks_Linear(allBooks_Linear *header);
-void BorrowBooks_Linear(allBooks_Linear *header);
-void ReturnBooks_Linear(allBooks_Linear *header);
-void ShowLogs_Linear(allBooks_Linear *header);
-
 void InsertInBookIDOrder_Linear(allBooks_Linear *header)
 {
     unsigned temp_id;
@@ -181,10 +172,10 @@ void BorrowBooks_Linear(allBooks_Linear *header)
             break;
         }
     }
-    if(flag == 0) printf("无此书");
+    if(flag == 0) printf("无此书\n");
     if(flag == 1)
     {
-        if(header[location].accessibility == 0) printf("不可借");
+        if(header[location].accessibility == 0) printf("不可借\n");
         if(header[location].accessibility == 1)
         {
             header[location].accessibility = 0;
@@ -263,4 +254,48 @@ void ShowLogs_Linear(allBooks_Linear *header)
             }
         }
     }
+}
+
+void ReadCSV(allBooks_Linear *header, const char *filename)
+{
+    FILE *file = fopen(filename, "r");
+    if (file == NULL)
+    {
+        printf("无法打开文件\n");
+        return;
+    }
+
+    char line[1024];
+    while(fgets(line, sizeof(line),file))
+    {
+        allBooks_Linear book;
+        unsigned temp_id = 0;
+        sscanf(line, "%u, %ls, %ls, %ls, %d",&book.book_id,&book.book_name,&book.author,&book.press,&book.publish_time);
+        int i = 0;
+        while (i < header->length && header[i].book_id < temp_id)
+        {
+            if (header[i].book_id == temp_id)
+            {
+                printf("该书已存在\n");
+                fclose(file);
+                return;
+            }
+            i++;
+        }
+
+        for (int j = header->length; j > i; j--)
+        {
+            header[j] = header[j - 1];
+        }
+
+        header[i].book_id = temp_id;
+        wcscpy(header[i].book_name, book.book_name);
+        wcscpy(header[i].author, book.author);
+        wcscpy(header[i].press, book.press);
+        header[i].publish_time = book.publish_time;
+        header[i].log.length = 0;
+        header[i].accessibility = 1;
+        header->length++;
+    }
+    fclose(file);
 }

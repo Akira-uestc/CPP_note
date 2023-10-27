@@ -1,6 +1,5 @@
 #include "LinkListDefination.c"
 #include "LinearListDefination.c"
-#include "ReadCSV.c"
 
 int main()
 {
@@ -15,8 +14,10 @@ int main()
             allBooks_Linear* header = (allBooks_Linear*)malloc(sizeof(allBooks_Linear));
             header->length = 0;
             header->log.length = 0;
+            ReadCSV(header, "books.csv");
             int x = -1;
-            while (1) {
+            while (1) 
+            {
                 printf("选择功能: \n");
                 printf("\t\t\t\t1:录入图书信息\t\t\t\t\n");
                 printf("\t\t\t\t2:删除指定图书\t\t\t\t\n");
