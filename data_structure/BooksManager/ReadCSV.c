@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
+#include <wchar.h>
 
 typedef struct borrow_info_Linear
 {
