@@ -7,27 +7,27 @@
 #include <string.h>
 #include <locale.h>
 
-typedef struct allBooks
-{
-    unsigned int book_id;
-    char book_name[20];
-    char author[20];
-    char press[20];
-    int publish_time;
-    int accessibility;
-    struct borrow_info *log;
-    struct allBooks *next;
-} allBooks;
-
 typedef struct borrow_info
 {
-    int frequency;
     int year;
     int month;
     int day;
-    char borrower[20];
+    wchar_t borrower[40];
+    int frequency;
     struct borrow_info *next;
 } borrow_info;
+
+typedef struct allBooks
+{
+    unsigned int book_id;
+    wchar_t book_name[100];
+    wchar_t author[40];
+    wchar_t press[100];
+    int publish_time;
+    int accessibility;
+    borrow_info* log;
+    struct allBooks *next;
+} allBooks;
 
 void InsertInBookIDOrder(allBooks *header);
 void EnterBooksInfo(allBooks *header);
@@ -51,11 +51,11 @@ void InsertInBookIDOrder(allBooks *header)
     scanf("%u", &newBook->book_id);
     getchar();
     printf("请输入图书名称：");
-    gets(newBook->book_name);
+    wscanf(L"%ls",newBook->book_name);
     printf("请输入作者姓名：");
-    gets(newBook->author);
+    wscanf(L"%ls",newBook->author);
     printf("请输入出版社名称：");
-    gets(newBook->press);
+    wscanf(L"%ls",newBook->press);
     printf("请输入出版年份：");
     scanf("%d", &newBook->publish_time);
 
@@ -125,7 +125,7 @@ void ShowAllBooks(allBooks *header)
     printf("编号\t名称\t作者\t出版社\t出版年份\t可借状态\n");
     while (temp != NULL)
     {
-        printf("%u\t%s\t%s\t%s\t%d\t", temp->book_id, temp->book_name, temp->author, temp->press, temp->publish_time);
+        wprintf(L"%u\t%ls\t%ls\t%ls\t%d\t", temp->book_id, temp->book_name, temp->author, temp->press, temp->publish_time);
         if (temp->accessibility == 1)
         {
             printf("可借\n");
@@ -140,22 +140,21 @@ void ShowAllBooks(allBooks *header)
 
 void SearchBooks(allBooks* header)
 {
-    char keyword[20];
+    wchar_t keyword[20];
     printf("请输入要查找的图书名称或作者姓名：");
-    getchar();
-    gets(keyword);
+    wscanf(L"%ls",&keyword);
     allBooks *p = header->next;
     int flag = 0;
     while (p != NULL)
     {
-        if (strcmp(p->book_name, keyword) == 0 || strcmp(p->author, keyword) == 0)
+        if (wcscmp(p->book_name, keyword) == 0 || wcscmp(p->author, keyword) == 0)
         {
             if (flag == 0)
             {
                 printf("编号\t名称\t作者\t出版社\t出版年份\t可借状态\n");
                 flag = 1;
             }
-            printf("%u\t%s\t%s\t%s\t%d\t", p->book_id, p->book_name, p->author, p->press, p->publish_time);
+            wprintf(L"%u\t%ls\t%ls\t%ls\t%d\t", p->book_id, p->book_name, p->author, p->press, p->publish_time);
             if (p->accessibility == 1)
             {
                 printf("可借\n");
@@ -169,7 +168,7 @@ void SearchBooks(allBooks* header)
     }
     if (flag == 0)
     {
-        printf("没有找到与%s相关的图书\n", keyword);
+        printf("没有找到相关的图书\n");
     }
 }
 
@@ -206,8 +205,7 @@ void BorrowBooks(allBooks *header)
     printf("请输入借阅日期（年-月-日）：");
     scanf("%d - %d - %d", &newLog->year, &newLog->month, &newLog->day);
     printf("请输入借阅者姓名：");
-    getchar();
-    gets(newLog->borrower);
+    wscanf(L"%ls",newLog->borrower);
 
     //适用于第一次借阅记录
     if(temp == NULL)
@@ -278,7 +276,7 @@ void ShowLogs(allBooks *header)
     if(q != NULL && q->next == NULL)
     {
         printf("\t%d-%d-%d\t",q->year,q->month,q->day);
-        puts(q->borrower);
+        wprintf(L"%ls",q->borrower);
         printf("\n");
     }
     if(q != NULL && q->next != NULL)
@@ -287,7 +285,7 @@ void ShowLogs(allBooks *header)
         {
             q = q->next;
             printf("\t%d-%d-%d\t",q->year,q->month,q->day);
-            puts(q->borrower);
+            wprintf(L"%ls",q->borrower);
             printf("\n");
         }
     }

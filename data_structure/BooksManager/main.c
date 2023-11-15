@@ -1,10 +1,8 @@
-#include "LinkListDefination.c"
-#include "LinearListDefination.c"
 #include "ReadCSV.c"
 
 int main()
 {
-    setlocale (LC_ALL,"");
+    setlocale(LC_CTYPE, "chs");
     int division;
     printf("选择使用线性表还是链表:1.线性表 2.链表\n");
     scanf("%d",&division);
@@ -12,12 +10,12 @@ int main()
     {
         case 1:
         {
-            allBooks_Linear* header = (allBooks_Linear*)malloc(sizeof(allBooks_Linear));
+            allBooks_Linear* header = (allBooks_Linear*)malloc(1024*sizeof(allBooks_Linear));
             header->length = 0;
             header->log.length = 0;
-            ReadCSV(header, "books.csv");
+            WriteToLinearList(L"books.csv",header);
             int x = -1;
-            while (1) 
+            while (1)
             {
                 printf("选择功能: \n");
                 printf("\t\t\t\t1:录入图书信息\t\t\t\t\n");
@@ -44,9 +42,10 @@ int main()
         }
         case 2:
         {
-            allBooks* books = (allBooks*)malloc(sizeof(allBooks));
+            allBooks* books = (allBooks*)malloc(1024*sizeof(allBooks));
             books->next = NULL;
             books->log = NULL;
+            WriteToLinkList(L"books.csv",books);
             int x = -1;
             while(1)
             {
